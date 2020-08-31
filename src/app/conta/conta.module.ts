@@ -12,6 +12,7 @@ import { CadastroComponent } from './cadastro/cadastro.component';
 import { LoginComponent } from './login/login.component';
 
 import { ContaService } from './services/conta.service';
+import { ContaGuard } from './services/conta.guard';
 
 
 
@@ -31,7 +32,8 @@ import { ContaService } from './services/conta.service';
     CustomFormsModule,
   ],
   providers: [
-    ContaService
+    ContaService,
+    ContaGuard
   ]
 })
 export class ContaModule { }

@@ -91,6 +91,8 @@ export class CadastroComponent implements OnInit, AfterViewInit {
           this.processarFalha(falha);
         }
       );
+
+      this.mudancasNaoSalvas = false;
     }
   }
 
