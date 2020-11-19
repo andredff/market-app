@@ -12,6 +12,8 @@ import { ValidationMessages, GenericValidator, DisplayMessage } from 'src/app/ut
 import { Fornecedor } from '../models/fornecedor';
 import { FornecedorService } from '../services/fornecedor.service';
 import { identifierModuleUrl } from '@angular/compiler';
+import { CepConsulta } from '../models/endereco';
+import { StringUtils } from 'src/app/utils/string-utils';
 
 @Component({
   selector: 'app-novo',
@@ -144,10 +146,45 @@ export class NovoComponent implements OnInit, AfterViewInit {
     return this.fornecedorForm.get('documento');
   }
 
+  buscarCep(cep: string) {
+
+    cep = StringUtils.somenteNumeros(cep);
+    if (cep.length < 8) return;
+
+    this.fornecedorService.consultarCep(cep)
+      .subscribe(
+        cepRetorno => this.preencherEnderecoConsulta(cepRetorno),
+        erro => this.errors.push(erro)
+        );
+  }
+
+  preencherEnderecoConsulta(cepConsulta: CepConsulta) {
+    this.fornecedorForm.patchValue({
+      endereco: {
+        logradouro: cepConsulta.logradouro,
+        bairro: cepConsulta.bairro,
+        cep: cepConsulta.cep,
+        cidade: cepConsulta.localidade,
+        estado: cepConsulta.uf
+      }
+    });
+  }
+
   adicionarFornecedor() {
     if (this.fornecedorForm.dirty && this.fornecedorForm.valid) {
+
       this.fornecedor = Object.assign({}, this.fornecedor, this.fornecedorForm.value);
+
+      // tslint:disable-next-line: radix
+      this.fornecedor.tipoFornecedor = parseInt(this.fornecedor.tipoFornecedor.toString());
+
+      // remove mask;
+      this.fornecedor.documento = this.fornecedor.documento.replace(/\D+/g, '');
+      this.fornecedor.endereco.cep = this.fornecedor.endereco.cep.replace(/\D+/g, '');
+
       this.formResult = JSON.stringify(this.fornecedor);
+
+      console.log(this.fornecedor);
 
       this.fornecedorService.novoFornecedor(this.fornecedor)
         .subscribe(

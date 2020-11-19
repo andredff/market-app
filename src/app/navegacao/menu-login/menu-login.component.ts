@@ -17,7 +17,6 @@ export class MenuLoginComponent {
 
   usuarioLogado(): boolean {
     
-    console.log('teste');
     // debugger;
     
     this.token = this.localStorageUtils.obterTokenUsuario();
